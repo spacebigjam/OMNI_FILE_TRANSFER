@@ -2,7 +2,7 @@ import sys
 import logging
 
 import paramiko
-from ftplib import FTP
+#from ftplib import FTP
 
 class FileTransfer:
 
@@ -15,31 +15,53 @@ class FileTransfer:
 		self._pass = password
 		self._tout = timeout
 
-		remote_hdlr = self.__initialize_cx()
+		remote_hdlr = self._initialize_cx()
 		if(remote_hdlr is not None):
-			self.remote_cx = __open_cx(remote_hdlr)
+			self.remote_cx = self._open_cx(remote_hdlr)
 		else:
 			self.remote_cx = None
 
-	def __initialize_cx(self):
-		if upper(self.__proto) == "SFTP":
+		
+
+	def _initialize_cx(self):
+		if str.upper(self._proto) == "SFTP":
 			try:
-				ssh = paramiko.SSHClient()
-				ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-				return ssh
+
+				cx = paramiko.Transport((self._host, 22))
+				cx.connect(username=self._user, password=self._pass)
+
+				sftp = paramiko.SFTPClient.from_transport(transport)
+
+				#ssh = paramiko.SSHClient()
+				#ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+				return sftp
 			except:
 				return None
-		elif upper(self.__proto) == "FTP":
+		elif str.upper(self._proto) == "FTP":
 			return None
 		else:
 			return None
 
-	def __open_cx(self, ssh_obj):
-		ssh_obj.connect(host, username=self._user, password=self._pass, timeout=self._tout)
+
+	def _open_cx(self, ssh_obj):
+		ssh_obj.connect(self._host, username=self._user, password=self._pass, timeout=self._tout)
 		return ssh_obj.open_sftp()
 
-	def __close_cx(self):
+
+	def _close_cx(self):
 		self.remote_cx.close()
 
-	def get_file(self, ori_file, ori_dir, dest_file=None, dest_dir):
-		
+
+	def put(self, ori_file, ori_dir, dest_file=None, dest_dir):
+		self.remote_cx.put()
+
+		self._close_cx()
+
+	#def get(self, ori_file, ori_dir, dest_file=None, dest_dir):
+
+
+
+if __name__ == "__main__":
+	ftp_obj = FileTransfer("SFTP", "192.168.0.200", "jam", "K3+tRiken", 120)
+	ftp_obj.put()
+
