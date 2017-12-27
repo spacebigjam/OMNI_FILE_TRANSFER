@@ -9,11 +9,11 @@ class FileTransfer:
 	SUPPORTED_PROTOCOLS = ["SFTP", "FTP"]
 
 	def __init__(self, protocol, host, user, password=None, timeout=60):
-		self._proto = protocol
-		self._host = host
-		self._user = user
-		self._pass = password
-		self._tout = timeout
+		self._proto	= protocol
+		self._host	= host
+		self._user	= user
+		self._pass	= password
+		self._tout	= timeout
 
 		remote_hdlr = self._initialize_cx()
 		if(remote_hdlr is not None):
@@ -21,7 +21,6 @@ class FileTransfer:
 		else:
 			self.remote_cx = None
 
-		
 
 	def _initialize_cx(self):
 		if str.upper(self._proto) == "SFTP":
@@ -62,6 +61,6 @@ class FileTransfer:
 
 
 if __name__ == "__main__":
-	ftp_obj = FileTransfer("SFTP", "192.168.0.200", "jam", "K3+tRiken", 120)
+	ftp_obj = FileTransfer("SFTP", "192.168.0.200", "jam", "password", 120)
 	ftp_obj.put()
 
